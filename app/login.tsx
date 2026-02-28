@@ -1,120 +1,135 @@
 import { useState } from "react";
-import { Image, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { theme } from "../src/theme/theme";
+import { router } from "expo-router";
 
-// Boutons réutilisables
 import Button from "../components/Button";
+import Input from "../components/Input";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="always"
+      >
+        {/* Logo + Nom de l'app */}
+       <View style={styles.header}> <Image source={require("../assets/logo.png")} style={styles.logo} /> <Text style={styles.appName}>NutriAI</Text> </View>
 
-      {/* Logo + Nom de l'app */}
-      <View style={styles.logoContainer}>
-        <Image
-          source={require("../assets/logo.png")}
-          style={styles.logo}
-        />
-        <Text style={styles.appName}>NutriAI</Text>
-      </View>
+        {/* Titre */}
+        <Text style={styles.title}>LOGIN</Text>
 
-      {/* Titre LOGIN */}
-      <Text style={styles.title}>LOGIN</Text>
-
-      {/* Inputs */}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor={theme.colors.muted}
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Mot de passe"
-        placeholderTextColor={theme.colors.muted}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-
-      {/* Boutons regroupés avec espacement */}
-      <View style={styles.buttonsContainer}>
-        <Button
-          name="Se connecter"
-          variant="primary"
-          onPress={() => console.log("Connexion")}
+        {/* Inputs */}
+        <Input
+          label="Email"
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
         />
 
-        <Button
-          name="Se connecter avec Google"
-          variant="secondary"
-          onPress={() => console.log("Google")}
+        <Input
+          label="Mot de passe"
+          placeholder="Mot de passe"
+          type="password"
+          value={password}
+          onChangeText={setPassword}
         />
 
-        <Button
-          name="Se connecter avec Apple"
-          variant="secondary"
-          onPress={() => console.log("Apple")}
-        />
-      </View>
+        {/* Boutons */}
+        <View style={styles.buttonsContainer}>
+          <Button
+            name="Se connecter"
+            variant="primary"
+            onPress={() => console.log("Connexion")}
+          />
 
-    </View>
+          <Button
+            name="Se connecter avec Google"
+            variant="secondary"
+            onPress={() => console.log("Google")}
+          />
+
+          <Button
+            name="Se connecter avec Apple"
+            variant="secondary"
+            onPress={() => console.log("Apple")}
+          />
+        </View>
+        <View style={styles.registerContainer}> <Text style={styles.registerText}>Pas de compte ? </Text> <Text style={styles.registerLink} onPress={() => router.push("/register")} > Inscrivez-vous </Text> </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: theme.colors.bg,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     paddingHorizontal: 30,
+    paddingVertical: 40,
   },
 
-  logoContainer: {
+  header: {
+    width: "100%",
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 40,
+    gap: 10,
+    marginBottom: 70,
   },
 
   logo: {
-    width: 80,
-    height: 80,
-    marginBottom: 10,
+    width: 50,
+    height: 50,
   },
 
   appName: {
-    fontSize: 28,
+    fontSize: 16,
     fontFamily: theme.fonts.title,
-    color: theme.colors.text,
+    color: theme.colors.textDark,
   },
 
   title: {
-    fontSize: 26,
+    fontSize: 24,
     textAlign: "center",
-    color: theme.colors.text,
-    marginBottom: 30,
+    color: theme.colors.textDark,
+    marginBottom: 80,
     fontFamily: theme.fonts.regular,
   },
 
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: theme.colors.brand,
-    borderRadius: theme.radius,
-    paddingHorizontal: 15,
-    backgroundColor: theme.colors.bgLight,
-    marginBottom: 20,
-    fontSize: 16,
-  },
-
   buttonsContainer: {
-    marginTop: 10,
-    gap: 15, // ESPACEMENT ENTRE LES BOUTONS
+    marginTop: 20,
+    gap: 15,
   },
+  registerContainer: {
+  flexDirection: "row",
+  justifyContent: "center",
+  marginTop: 20,
+},
+
+registerText: {
+  fontSize: 14,
+  color: "#555",
+},
+
+registerLink: {
+  fontSize: 14,
+  color: theme.colors.gold, // bleu iOS
+  fontWeight: "600",
+},
+
 });
