@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingVertical: 13,
     paddingHorizontal: 43,
-    borderRadius: 12,
+    borderRadius: theme.radius,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -29,23 +29,26 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.regular,
   },
 
-  // VARIANTES
+  /* VARIANTES */
+
+  // Bouton principal : OR
   primary: {
-    backgroundColor: "#D4AF37",
+    backgroundColor: theme.colors.gold,      // #D4AF37
     borderWidth: 2,
-    borderColor: "#FFFF",   // la bordure demandée
+    borderColor: theme.colors.textLight,     // #FDF6EC (bordure crème)
   },
   primaryText: {
-    color: "#fff",
+    color: theme.colors.textLight,           // #FDF6EC (texte crème)
   },
 
+  // Bouton secondaire : crème + bordure or
   secondary: {
-    backgroundColor: "#FDF6EC",
+    backgroundColor: theme.colors.bg,        // #FDF6EC
     borderWidth: 1,
-    borderColor: "#D4AF37",   // la bordure demandée
+    borderColor: theme.colors.gold,          // #D4AF37
   },
   secondaryText: {
-    color: "#5A3D21",
+    color: theme.colors.textDark,            // #5A3D21
   },
 
   disabled: {
