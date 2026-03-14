@@ -2,6 +2,7 @@ import { useState } from 'react'
 import theme from '../theme'
 
 import Input from '../components/Input'
+import Button from '../components/Button'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -48,19 +49,13 @@ const Login = () => {
 
 
         {/* Bouton Connexion */}
-        <button style={styles.btnPrimary} onClick={handleLogin}>
-          Connexion
-        </button>
+        <Button label="Connexion" onClick={handleLogin} variant="primary" />
 
         {/* Bouton Google */}
-        <button style={styles.btnSecondary} onClick={handleGoogle}>
-          Se connecter avec Google
-        </button>
+        <Button label="Se connecter avec Google" onClick={handleGoogle} variant="secondary" />
 
         {/* Bouton Apple */}
-        <button style={styles.btnSecondary} onClick={handleApple}>
-          Se connecter avec Apple
-        </button>
+        <Button label="Se connecter avec Apple" onClick={handleApple} variant="secondary" />
 
         {/* Lien Register */}
         <p style={styles.registerLink}>
@@ -81,12 +76,13 @@ const styles = {
   padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
   justifyContent: 'space-between',
 },
-  header: {
+header: {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-start',
   width: '100%',
   position: 'relative',
+  marginTop: theme.spacing.sm,
 },
   logo: {
   width: '50px',

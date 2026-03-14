@@ -42,10 +42,10 @@ const theme = {
   },
 
   spacing: {
-    xs: '5px',
+    xs: '4px',
     sm: '8px',
     md: '16px',
-    lg: '24px',
+    lg: '1px',
     xl: '32px',
   }
 }

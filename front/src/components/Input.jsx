@@ -27,7 +27,7 @@ const styles = {
     fontSize: '14px',
     color: theme.colors.textPrimary,
     fontFamily: theme.fonts.primary,
-      width: '72%',
+      width: '42%',
   },
   input: {
     padding: `${theme.spacing.sm} ${theme.spacing.md}`,
@@ -38,7 +38,7 @@ const styles = {
     color: theme.colors.textPrimary,
     outline: 'none',
     fontFamily: theme.fonts.primary,
-    width: '70%',
+    width: '40%',
   }
 }
 
