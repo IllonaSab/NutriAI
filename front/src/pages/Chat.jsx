@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { FiSend } from 'react-icons/fi'
 import axios from 'axios'
 import theme from '../theme'
+import config from '../config'
 
 import ChatMessage from '../components/ChatMessage'
 import Header from '../components/Header'
@@ -28,8 +29,8 @@ const Chat = () => {
     setLoading(true)
 
     try {
-      const res = await axios.post(`${process.env.REACT_APP_IA_URL}/ia/nutrition`, {
-        message: input
+      const res = await axios.post(`${config.IA_URL}/ia/nutrition`, {
+  message: input
       })
       const botMessage = { from: 'chat', text: res.data.response }
       setMessages(prev => [...prev, botMessage])
