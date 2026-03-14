@@ -19,6 +19,12 @@ const theme = {
     messagePrimary: '#D4AF37',   // doré (message IA)
     messageSecondary: '#FDF6EC', // blanc (message user)
 
+    // Input 
+    inputBackground: '#FDF6EC',
+    inputBorder: '#D4AF37',
+    placeholder: '#5A3D21',
+  
+  
     // Statuts
     success: '#6BAF6B',
     error: '#E07070',
@@ -36,7 +42,7 @@ const theme = {
   },
 
   spacing: {
-    xs: '4px',
+    xs: '5px',
     sm: '8px',
     md: '16px',
     lg: '24px',
