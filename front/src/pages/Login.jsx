@@ -70,10 +70,11 @@ const Login = () => {
 }
 
 const styles = {
-  container: {
+ container: {
   display: 'flex',
   flexDirection: 'column',
   height: '100vh',
+  overflow: 'hidden',
   backgroundColor: theme.colors.background,
   fontFamily: theme.fonts.primary,
   padding: `${theme.spacing.lg} ${theme.spacing.xl}`,

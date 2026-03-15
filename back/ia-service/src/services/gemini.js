@@ -4,12 +4,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
 const analyzeNutrition = async (message) => {
-  const prompt = `
-    Tu es un expert en nutrition. Réponds en français.
-    L'utilisateur dit : "${message}"
-    Donne des conseils nutritionnels précis, clairs et bienveillants.
-  `
-  const result = await model.generateContent(prompt)
+  const result = await model.generateContent(message)
   return result.response.text()
 }
 
