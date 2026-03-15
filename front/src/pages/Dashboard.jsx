@@ -9,22 +9,31 @@ import Input from '../components/Input'
 import Card from '../components/Card'
 import DateNav from '../components/DateNav'
 
-
 const Dashboard = () => {
   const navigate = useNavigate()
   const { user } = useUser()
   const [humeur, setHumeur] = useState(null)
   const [repas, setRepas] = useState([
-   { id: 1, nom: 'Petit déj', icon: '/petitdej.png', mange: false },
-   { id: 2, nom: 'Déjeuner', icon: '/dejeuner.png', mange: false },
-   { id: 3, nom: 'Encas', icon: '/encas.png', mange: false },
-   { id: 4, nom: 'Dîner', icon: '/diner.png', mange: false },
+    { id: 1, nom: 'Petit déj', icon: '/petitdej.png', mange: false },
+    { id: 2, nom: 'Déjeuner', icon: '/dejeuner.png', mange: false },
+    { id: 3, nom: 'Encas', icon: '/encas.png', mange: false },
+    { id: 4, nom: 'Dîner', icon: '/diner.png', mange: false },
   ])
   const [eau, setEau] = useState(0)
   const [victoire, setVictoire] = useState('')
   const [message, setMessage] = useState('...')
+  const [dateSelectee, setDateSelectee] = useState(new Date())
   const prenom = user?.name?.split(' ')[0] || 'toi'
+  const dateString = dateSelectee.toISOString().split('T')[0]
 
+  const repasDefaut = [
+    { id: 1, nom: 'Petit déj', icon: '/petitdej.png', mange: false },
+    { id: 2, nom: 'Déjeuner', icon: '/dejeuner.png', mange: false },
+    { id: 3, nom: 'Encas', icon: '/encas.png', mange: false },
+    { id: 4, nom: 'Dîner', icon: '/diner.png', mange: false },
+  ]
+
+  // Message du jour
   useEffect(() => {
     const fetchMessage = async () => {
       try {
@@ -37,24 +46,82 @@ const Dashboard = () => {
       }
     }
     fetchMessage()
-  }, [user?.objectif])
+  }, [])
+
+  // Charger les données du jour
+  useEffect(() => {
+    if (!user?.id) return
+    const chargerJour = async () => {
+      try {
+        const res = await axios.get(`${config.DB_URL}/users/jour/${user.id}/${dateString}`)
+        setHumeur(res.data.humeur)
+        setRepas(res.data.repas?.length ? res.data.repas : repasDefaut)
+        setEau(res.data.eau || 0)
+        setVictoire(res.data.victoire || '')
+      } catch {
+        setHumeur(null)
+        setRepas(repasDefaut)
+        setEau(0)
+        setVictoire('')
+      }
+    }
+    chargerJour()
+  }, [dateString, user])
+
+  // Sauvegarder automatiquement
+  const sauvegarder = async (newHumeur, newRepas, newEau, newVictoire) => {
+    if (!user?.id) return
+    try {
+      await axios.post(`${config.DB_URL}/users/jour`, {
+        userId: user.id,
+        date: dateString,
+        humeur: newHumeur,
+        repas: newRepas,
+        eau: newEau,
+        victoire: newVictoire
+      })
+    } catch (err) {
+      console.error('Erreur sauvegarde', err)
+    }
+  }
+
+  const handleHumeur = (i) => {
+    setHumeur(i)
+    sauvegarder(i, repas, eau, victoire)
+  }
+
+  const handleRepas = (id) => {
+    const newRepas = repas.map(x => x.id === id ? { ...x, mange: !x.mange } : x)
+    setRepas(newRepas)
+    sauvegarder(humeur, newRepas, eau, victoire)
+  }
+
+  const handleEau = (i) => {
+    const newEau = i < eau ? i : i + 1
+    setEau(newEau)
+    sauvegarder(humeur, repas, newEau, victoire)
+  }
+
+  const handleVictoire = (val) => {
+    setVictoire(val)
+    sauvegarder(humeur, repas, eau, val)
+  }
 
   return (
     <div style={styles.container}>
       <Header title={`Bonjour ${prenom} 🌸`} />
-      
+      <DateNav onDateChange={(d) => setDateSelectee(d)} />
 
       <div style={styles.scroll}>
 
         {/* Message */}
-       <Card>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-         <img src="/butterfly.png" alt="" style={styles.butterfly} />
-        <p style={styles.messageText}>{message}</p>
-         <img src="/butterfly.png" alt="" style={styles.butterfly} />
-        </div>
-       </Card>
-       <DateNav onDateChange={(d) => console.log('Date changée :', d)} />
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <img src="/butterfly.png" alt="" style={styles.butterfly} />
+            <p style={styles.messageText}>{message}</p>
+          </div>
+        </Card>
+
         {/* Humeur */}
         <Card title="Comment tu te sens ?">
           <div style={styles.row}>
@@ -64,7 +131,7 @@ const Dashboard = () => {
               { emoji: '🙂', label: 'Bien' },
               { emoji: '😊', label: 'Super' },
             ].map((e, i) => (
-              <div key={i} onClick={() => setHumeur(i)} style={{
+              <div key={i} onClick={() => handleHumeur(i)} style={{
                 ...styles.item,
                 backgroundColor: humeur === i ? theme.colors.primary : theme.colors.background,
               }}>
@@ -80,32 +147,31 @@ const Dashboard = () => {
         </Card>
 
         {/* Repas */}
-<Card title="Mes repas">
-  <div style={styles.row}>
-    {repas.map(r => (
-      <div key={r.id} onClick={() => setRepas(repas.map(x => x.id === r.id ? { ...x, mange: !x.mange } : x))} style={{
-        ...styles.item,
-       backgroundColor: r.mange ? theme.colors.repasBackground : theme.colors.background,
-       border: r.mange ? `2px solid ${theme.colors.repasBorder}` : '2px solid transparent',
-       color: r.mange ? theme.colors.repasText : theme.colors.textSecondary,
-      }}>
-        <img src={r.icon} alt={r.nom} style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
-        <span style={{
-          fontSize: '10px',
-          color: r.mange ? theme.colors.repasText : theme.colors.textSecondary,
-          fontFamily: theme.fonts.primary,
-        }}>{r.nom}</span>
-        {r.mange && <span style={{ fontSize: '12px', color: theme.colors.repasText }}>✓</span>}
-      </div>
-    ))}
-  </div>
-</Card>
+        <Card title="Mes repas">
+          <div style={styles.row}>
+            {repas.map(r => (
+              <div key={r.id} onClick={() => handleRepas(r.id)} style={{
+                ...styles.item,
+                backgroundColor: r.mange ? theme.colors.repasBackground : theme.colors.background,
+                border: r.mange ? `2px solid ${theme.colors.repasBorder}` : '2px solid transparent',
+              }}>
+                <img src={r.icon} alt={r.nom} style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                <span style={{
+                  fontSize: '10px',
+                  color: r.mange ? theme.colors.repasText : theme.colors.textSecondary,
+                  fontFamily: theme.fonts.primary,
+                }}>{r.nom}</span>
+                {r.mange && <span style={{ fontSize: '12px', color: theme.colors.repasText }}>✓</span>}
+              </div>
+            ))}
+          </div>
+        </Card>
 
         {/* Eau */}
         <Card title={`Hydratation 💧 — ${eau}/8`}>
           <div style={styles.row}>
             {[...Array(8)].map((_, i) => (
-              <span key={i} onClick={() => setEau(i < eau ? i : i + 1)} style={{
+              <span key={i} onClick={() => handleEau(i)} style={{
                 fontSize: '22px',
                 opacity: i < eau ? 1 : 0.2,
                 cursor: 'pointer',
@@ -122,16 +188,17 @@ const Dashboard = () => {
           <Input
             placeholder="Une petite victoire à célébrer..."
             value={victoire}
-            onChange={e => setVictoire(e.target.value)}
+            onChange={e => handleVictoire(e.target.value)}
           />
         </Card>
 
-        {/* Chat */}
-        <div style={styles.floatingBtn} onClick={() => navigate('/chat')}>
-         <img src="/bulle.png" alt="chat" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
-        </div>
-
       </div>
+
+      {/* Bouton flottant chat */}
+      <div style={styles.floatingBtn} onClick={() => navigate('/chat')}>
+        <img src="/bulle.png" alt="chat" style={{ width: '42px', height: '42px', objectFit: 'contain' }} />
+      </div>
+
     </div>
   )
 }
@@ -153,20 +220,19 @@ const styles = {
     gap: '16px',
   },
   butterfly: {
-  width: '50px',
-  height: '50px',
-  objectFit: 'contain',
-  flexShrink: 0,
-},
-messageText: {
-  fontSize: '14px',
-  color: theme.colors.textSecondary,
-  fontStyle: 'italic',
-  lineHeight: '1.6',
-  margin: 0,
-  textAlign: 'center',
-  flex: 1,
-},
+    width: '50px',
+    height: '50px',
+    objectFit: 'contain',
+    flexShrink: 0,
+  },
+  messageText: {
+    fontSize: '14px',
+    color: theme.colors.textSecondary,
+    fontStyle: 'italic',
+    lineHeight: '1.6',
+    margin: 0,
+    flex: 1,
+  },
   row: {
     display: 'flex',
     gap: '8px',
@@ -183,21 +249,22 @@ messageText: {
     cursor: 'pointer',
     transition: 'all 0.2s',
     minWidth: '60px',
-    },
+  },
   floatingBtn: {
-  position: 'fixed',
-  bottom: '22px',
-  right: '22px',
-  width: '70px',
-  height: '70px',
-  borderRadius: '50%',
-      backgroundColor: theme.colors.border,
-  border: `2px solid ${theme.colors.primary}`,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-},
+    position: 'fixed',
+    bottom: '24px',
+    right: '24px',
+    width: '70px',
+    height: '70px',
+    borderRadius: '50%',
+    backgroundColor: theme.colors.primary,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    boxShadow: '0 6px 20px rgba(200,168,75,0.5)',
+    zIndex: 100,
+  },
 }
 
 export default Dashboard
