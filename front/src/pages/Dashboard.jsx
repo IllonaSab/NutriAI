@@ -1,148 +1,133 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ReactMarkdown from 'react-markdown'
 import axios from 'axios'
 import config from '../config'
 import { useUser } from '../context/UserContext'
-
-import Header from '../components/Header'
-import Button from '../components/Button'
-import Input from '../components/Input'
-
 import theme from '../theme'
-
-
-const emojis = ['😔', '😕', '😐', '🙂', '😊']
-
-
-const repasInitiaux = [
-  { id: 1, nom: 'Petit déjeuner', mange: false },
-  { id: 2, nom: 'Déjeuner', mange: false },
-  { id: 3, nom: 'Encas', mange: false },
-  { id: 4, nom: 'Dîner', mange: false },
-]
+import Header from '../components/Header'
+import Input from '../components/Input'
+import Card from '../components/Card'
+import Button from '../components/Button'
 
 const Dashboard = () => {
   const navigate = useNavigate()
   const { user } = useUser()
   const [humeur, setHumeur] = useState(null)
-  const [repas, setRepas] = useState(repasInitiaux)
+  const [repas, setRepas] = useState([
+    { id: 1, nom: 'Petit déj', icon: '🌅', mange: false },
+    { id: 2, nom: 'Déjeuner', icon: '☀️', mange: false },
+    { id: 3, nom: 'Encas', icon: '🍎', mange: false },
+    { id: 4, nom: 'Dîner', icon: '🌙', mange: false },
+  ])
   const [eau, setEau] = useState(0)
   const [victoire, setVictoire] = useState('')
-  const [message, setMessage] = useState('Chargement de ton message du jour...')
+  const [message, setMessage] = useState('...')
+  const prenom = user?.name?.split(' ')[0] || 'toi'
 
   useEffect(() => {
     const fetchMessage = async () => {
       try {
         const res = await axios.post(`${config.IA_URL}/ia/nutrition`, {
-          message: 'Réponds avec UNE SEULE phrase courte et douce (max 15 mots). Pas de titre, pas de liste, juste une phrase encourageante sur le rapport à la nourriture.'
+          message: `Donne uniquement une phrase courte et douce (max 15 mots) pour encourager quelqu'un dont l'objectif est "${user?.objectif || 'se réconcilier avec la nourriture'}". Réponds UNIQUEMENT avec la phrase.`
         })
         setMessage(res.data.response)
       } catch {
-        setMessage('Chaque repas est une nouvelle opportunité de prendre soin de toi. 💛')
+        setMessage('Chaque repas est une nouvelle opportunité de prendre soin de toi 💛')
       }
     }
     fetchMessage()
   }, [])
 
-  const toggleRepas = (id) => {
-    setRepas(repas.map(r => r.id === id ? { ...r, mange: !r.mange } : r))
-  }
-
   return (
     <div style={styles.container}>
-      <Header title={`Bienvenue ${user?.name?.split(' ')[0] || 'toi'} 💛`} />
+      <Header title={`Bonjour ${prenom} 🌸`} />
 
-      <div style={styles.content}>
+      <div style={styles.scroll}>
 
-        {/* Message du jour */}
-        <div style={styles.card}>
-          <p style={styles.cardTitle}>💛 Message du jour</p>
-          <ReactMarkdown style={styles.messageText}>{message}</ReactMarkdown>
+        {/* Message */}
+       <Card>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+         <img src="/butterfly.png" alt="" style={styles.butterfly} />
+         <p style={styles.messageText}>{message}</p>
         </div>
+       </Card>
 
         {/* Humeur */}
-        <div style={styles.card}>
-          <p style={styles.cardTitle}>Comment tu te sens ?</p>
-          <div style={styles.emojiRow}>
-            {emojis.map((emoji, i) => (
-              <button
-                key={i}
-                style={{
-                  ...styles.emojiBtn,
-                  backgroundColor: humeur === i ? theme.colors.primary : 'transparent',
-                  transform: humeur === i ? 'scale(1.3)' : 'scale(1)',
-                }}
-                onClick={() => setHumeur(i)}
-              >
-                {emoji}
-              </button>
+        <Card title="Comment tu te sens ?">
+          <div style={styles.row}>
+            {[
+              { emoji: '😔', label: 'Difficile' },
+              { emoji: '😐', label: 'Neutre' },
+              { emoji: '🙂', label: 'Bien' },
+              { emoji: '😊', label: 'Super' },
+            ].map((e, i) => (
+              <div key={i} onClick={() => setHumeur(i)} style={{
+                ...styles.item,
+                backgroundColor: humeur === i ? theme.colors.primary : theme.colors.background,
+              }}>
+                <span style={{ fontSize: '26px' }}>{e.emoji}</span>
+                <span style={{
+                  fontSize: '10px',
+                  color: humeur === i ? '#FFF' : theme.colors.textSecondary,
+                  fontFamily: theme.fonts.primary,
+                }}>{e.label}</span>
+              </div>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* Repas */}
-        <div style={styles.card}>
-          <p style={styles.cardTitle}>Mes repas d'aujourd'hui</p>
-          {repas.map(r => (
-            <div key={r.id} style={styles.repasRow}>
-              <button
-                style={{
-                  ...styles.checkbox,
-                  backgroundColor: r.mange ? theme.colors.primary : 'transparent',
-                  borderColor: r.mange ? theme.colors.primary : theme.colors.inputBorder,
-                }}
-                onClick={() => toggleRepas(r.id)}
-              >
-                {r.mange ? '✓' : ''}
-              </button>
-              <span style={{
-                ...styles.repasLabel,
-                textDecoration: r.mange ? 'line-through' : 'none',
-                color: r.mange ? theme.colors.textSecondary : theme.colors.textPrimary,
+        <Card title="Mes repas">
+          <div style={styles.row}>
+            {repas.map(r => (
+              <div key={r.id} onClick={() => setRepas(repas.map(x => x.id === r.id ? { ...x, mange: !x.mange } : x))} style={{
+                ...styles.item,
+                backgroundColor: r.mange ? '#E8F5E9' : theme.colors.background,
+                border: r.mange ? '2px solid #81C784' : '2px solid transparent',
               }}>
-                {r.nom}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Eau */}
-        <div style={styles.card}>
-          <p style={styles.cardTitle}>Mon eau</p>
-          <div style={styles.eauRow}>
-            {[...Array(8)].map((_, i) => (
-              <button
-                key={i}
-                style={{
-                  ...styles.eauBtn,
-                  opacity: i < eau ? 1 : 0.3,
-                }}
-                onClick={() => setEau(i < eau ? i : i + 1)}
-              >
-                🥤
-              </button>
+                <span style={{ fontSize: '24px' }}>{r.icon}</span>
+                <span style={{
+                  fontSize: '10px',
+                  color: r.mange ? '#2E7D32' : theme.colors.textSecondary,
+                  fontFamily: theme.fonts.primary,
+                }}>{r.nom}</span>
+                {r.mange && <span style={{ fontSize: '12px', color: '#2E7D32' }}>✓</span>}
+              </div>
             ))}
           </div>
-          <p style={styles.eauText}>{eau} verre{eau > 1 ? 's' : ''} / 8</p>
-        </div>
+        </Card>
+
+        {/* Eau */}
+        <Card title={`Hydratation 💧 — ${eau}/8`}>
+          <div style={styles.row}>
+            {[...Array(8)].map((_, i) => (
+              <span key={i} onClick={() => setEau(i < eau ? i : i + 1)} style={{
+                fontSize: '22px',
+                opacity: i < eau ? 1 : 0.2,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}>
+                💧
+              </span>
+            ))}
+          </div>
+        </Card>
 
         {/* Victoire */}
-        <div style={styles.card}>
-          <p style={styles.cardTitle}>🌟 Ma victoire du jour</p>
+        <Card title="🌟 Ma fierté du jour">
           <Input
-  placeholder="Note une petite fierté..."
-  value={victoire}
-  onChange={e => setVictoire(e.target.value)}
-/>
-        </div>
+            placeholder="Une petite victoire à célébrer..."
+            value={victoire}
+            onChange={e => setVictoire(e.target.value)}
+          />
+        </Card>
 
-        {/* Bouton Chat IA */}
-        <Button 
-  label="💬 Parler à mon assistant NutriAI" 
-  onClick={() => navigate('/chat')} 
-  variant="primary" 
-/>
+        {/* Chat */}
+        <Button
+          label="💬 Parler à NutriAI"
+          onClick={() => navigate('/chat')}
+          variant="primary"
+        />
 
       </div>
     </div>
@@ -150,90 +135,52 @@ const Dashboard = () => {
 }
 
 const styles = {
- container: {
+  container: {
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
     backgroundColor: theme.colors.background,
     fontFamily: theme.fonts.primary,
   },
-  content: {
+  scroll: {
+    flex: 1,
+    overflowY: 'auto',
+    padding: '16px',
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing.md,
-    padding: theme.spacing.md,
-    overflowY: 'auto',
-    flex: 1,
+    gap: '16px',
   },
-  card: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.medium,
-    padding: theme.spacing.md,
-    border: `1px solid ${theme.colors.border}`,
-  },
-  cardTitle: {
-    fontSize: '15px',
-    fontWeight: '500',
-    color: theme.colors.secondary,
-    marginBottom: theme.spacing.sm,
-  },
-  messageText: {
-    fontSize: '14px',
-    color: theme.colors.textSecondary,
-    lineHeight: '1.6',
-    fontStyle: 'italic',
-  },
-  emojiRow: {
+  butterfly: {
+  width: '50px',
+  height: '50px',
+  objectFit: 'contain',
+  flexShrink: 0,
+},
+messageText: {
+  fontSize: '14px',
+  color: theme.colors.textSecondary,
+  fontStyle: 'italic',
+  lineHeight: '1.6',
+  margin: 0,
+  textAlign: 'center',
+  flex: 1,
+},
+  row: {
     display: 'flex',
-    justifyContent: 'space-around',
-    marginTop: theme.spacing.sm,
-  },
-  emojiBtn: {
-    fontSize: '28px',
-    border: 'none',
-    cursor: 'pointer',
-    borderRadius: theme.borderRadius.round,
-    padding: theme.spacing.xs,
-    transition: 'transform 0.2s',
-  },
-  repasRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: theme.spacing.md,
-    padding: `${theme.spacing.sm} 0`,
-    borderBottom: `1px solid ${theme.colors.border}`,
-  },
-  checkbox: {
-    width: '24px',
-    height: '24px',
-    borderRadius: '6px',
-    border: `2px solid ${theme.colors.inputBorder}`,
-    cursor: 'pointer',
-    fontSize: '14px',
-    color: theme.colors.textLight,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  repasLabel: {
-    fontSize: '15px',
-  },
-  eauRow: {
-    display: 'flex',
-    gap: theme.spacing.sm,
+    gap: '8px',
     flexWrap: 'wrap',
-    marginTop: theme.spacing.sm,
   },
-  eauBtn: {
-    fontSize: '24px',
-    border: 'none',
-    backgroundColor: 'transparent',
+  item: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '10px 6px',
+    borderRadius: '12px',
     cursor: 'pointer',
-  },
-  eauText: {
-    fontSize: '13px',
-    color: theme.colors.textSecondary,
-    marginTop: theme.spacing.xs,
+    transition: 'all 0.2s',
+    minWidth: '60px',
   },
 }
 

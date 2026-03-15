@@ -32,7 +32,7 @@ const Chat = () => {
 
     try {
       const res = await axios.post(`${config.IA_URL}/ia/nutrition`, {
-  message: `Tu parles à ${user?.name?.split(' ')[0] || 'quelqu\'un'} dont l'objectif est "${user?.objectif || 'se réconcilier avec la nourriture'}". Réponds à ce message de façon bienveillante et personnalisée : ${input}`
+      message: `Tu parles à ${user?.name?.split(' ')[0] || 'quelqu\'un'} dont l'objectif est "${user?.objectif || 'se réconcilier avec la nourriture'}". Réponds à ce message de façon bienveillante et personnalisée : ${input}`
 })
       const botMessage = { from: 'chat', text: res.data.response }
       setMessages(prev => [...prev, botMessage])
