@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "age" INTEGER,
+ADD COLUMN     "objectif" TEXT,
+ADD COLUMN     "poids" DOUBLE PRECISION,
+ADD COLUMN     "taille" DOUBLE PRECISION;

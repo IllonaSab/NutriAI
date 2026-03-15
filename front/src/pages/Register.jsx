@@ -1,8 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import config from '../config'
+
+import { useUser } from '../context/UserContext'
 import Input from '../components/Input'
 import Button, { ButtonSelect } from '../components/Button'
+
 import theme from '../theme'
+
 
 const Register = () => {
   const navigate = useNavigate()
@@ -19,11 +25,27 @@ const Register = () => {
 
   const handleChange = (field) => (e) => {
     setForm({ ...form, [field]: e.target.value })
+    }
+    
+  const { login } = useUser()
+ const handleRegister = async () => {
+  try {
+    const res = await axios.post(`${config.DB_URL}/users/upsert`, {
+      email: form.email,
+      name: `${form.prenom} ${form.nom}`,
+      provider: 'local',
+      providerId: form.email,
+      age: parseInt(form.age),
+      poids: parseFloat(form.poids),
+      taille: parseFloat(form.taille),
+      objectif: form.objectif
+    })
+    login(res.data)
+    navigate('/dashboard')
+  } catch (err) {
+    console.error('Erreur inscription', err)
   }
-
-  const handleRegister = () => {
-    console.log('Register', form)
-  }
+}
 
   const handleGoogle = () => {
     window.location.href = `http://localhost:3001/auth/google`
@@ -56,14 +78,14 @@ const Register = () => {
         <div style={styles.objectifContainer}>
           <label style={styles.label}>Objectif</label>
           <div style={styles.objectifButtons}>
-            {['Perte de poids', 'Maintient', 'Prise de masse'].map((obj) => (
-  <ButtonSelect
-    key={obj}
-    label={obj}
-    selected={form.objectif === obj}
-    onClick={() => setForm({ ...form, objectif: obj })}
-  />
-))}
+            {['Douceur','Stabilité', 'Réussite'].map((obj) => (
+        <ButtonSelect
+            key={obj}
+            label={obj}
+            selected={form.objectif === obj}
+            onClick={() => setForm({ ...form, objectif: obj })}
+            />
+        ))}
           </div>
         </div>
 

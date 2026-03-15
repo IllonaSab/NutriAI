@@ -3,12 +3,14 @@ import { FiSend } from 'react-icons/fi'
 import axios from 'axios'
 import theme from '../theme'
 import config from '../config'
+import { useUser } from '../context/UserContext'
 
 import ChatMessage from '../components/ChatMessage'
 import Header from '../components/Header'
 
 
 const Chat = () => {
+  const { user } = useUser()
   const [messages, setMessages] = useState([
     { from: 'chat', text: 'Bonjour ! Je suis ton assistant NutriAI. Comment puis-je t\'aider ?' }
   ])
@@ -30,8 +32,8 @@ const Chat = () => {
 
     try {
       const res = await axios.post(`${config.IA_URL}/ia/nutrition`, {
-  message: input
-      })
+  message: `Tu parles à ${user?.name?.split(' ')[0] || 'quelqu\'un'} dont l'objectif est "${user?.objectif || 'se réconcilier avec la nourriture'}". Réponds à ce message de façon bienveillante et personnalisée : ${input}`
+})
       const botMessage = { from: 'chat', text: res.data.response }
       setMessages(prev => [...prev, botMessage])
     } catch (err) {
@@ -51,7 +53,7 @@ const Chat = () => {
   return (
     <div style={styles.container}>
       {/* Header */}
-      <Header title="Bienvenue Illona" />
+      <Header title={`Bienvenue ${user?.name?.split(' ')[0] || 'toi'} 💛`} />
 
 
       {/* Messages */}

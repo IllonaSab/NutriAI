@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
+import axios from 'axios'
+import config from '../config'
+import { useUser } from '../context/UserContext'
+
 import Header from '../components/Header'
 import Button from '../components/Button'
 import Input from '../components/Input'
+
 import theme from '../theme'
-import axios from 'axios'
-import config from '../config'
+
 
 const emojis = ['😔', '😕', '😐', '🙂', '😊']
+
 
 const repasInitiaux = [
   { id: 1, nom: 'Petit déjeuner', mange: false },
@@ -19,6 +24,7 @@ const repasInitiaux = [
 
 const Dashboard = () => {
   const navigate = useNavigate()
+  const { user } = useUser()
   const [humeur, setHumeur] = useState(null)
   const [repas, setRepas] = useState(repasInitiaux)
   const [eau, setEau] = useState(0)
@@ -45,7 +51,7 @@ const Dashboard = () => {
 
   return (
     <div style={styles.container}>
-      <Header title="Bienvenue Illona" />
+      <Header title={`Bienvenue ${user?.name?.split(' ')[0] || 'toi'} 💛`} />
 
       <div style={styles.content}>
 
