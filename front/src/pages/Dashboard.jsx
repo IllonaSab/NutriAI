@@ -48,7 +48,8 @@ const Dashboard = () => {
        <Card>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
          <img src="/butterfly.png" alt="" style={styles.butterfly} />
-         <p style={styles.messageText}>{message}</p>
+        <p style={styles.messageText}>{message}</p>
+         <img src="/butterfly.png" alt="" style={styles.butterfly} />
         </div>
        </Card>
 
@@ -68,7 +69,7 @@ const Dashboard = () => {
                 <span style={{ fontSize: '26px' }}>{e.emoji}</span>
                 <span style={{
                   fontSize: '10px',
-                  color: humeur === i ? '#FFF' : theme.colors.textSecondary,
+                  color: humeur === i ? theme.colors.surface : theme.colors.textSecondary,
                   fontFamily: theme.fonts.primary,
                 }}>{e.label}</span>
               </div>
@@ -82,16 +83,17 @@ const Dashboard = () => {
     {repas.map(r => (
       <div key={r.id} onClick={() => setRepas(repas.map(x => x.id === r.id ? { ...x, mange: !x.mange } : x))} style={{
         ...styles.item,
-        backgroundColor: r.mange ? '#E8F5E9' : theme.colors.background,
-        border: r.mange ? '2px solid #81C784' : '2px solid transparent',
+       backgroundColor: r.mange ? theme.colors.repasBackground : theme.colors.background,
+       border: r.mange ? `2px solid ${theme.colors.repasBorder}` : '2px solid transparent',
+       color: r.mange ? theme.colors.repasText : theme.colors.textSecondary,
       }}>
         <img src={r.icon} alt={r.nom} style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
         <span style={{
           fontSize: '10px',
-          color: r.mange ? '#2E7D32' : theme.colors.textSecondary,
+          color: r.mange ? theme.colors.repasText : theme.colors.textSecondary,
           fontFamily: theme.fonts.primary,
         }}>{r.nom}</span>
-        {r.mange && <span style={{ fontSize: '12px', color: '#2E7D32' }}>✓</span>}
+        {r.mange && <span style={{ fontSize: '12px', color: theme.colors.repasText }}>✓</span>}
       </div>
     ))}
   </div>
@@ -123,11 +125,9 @@ const Dashboard = () => {
         </Card>
 
         {/* Chat */}
-        <Button
-          label="💬 Parler à NutriAI"
-          onClick={() => navigate('/chat')}
-          variant="primary"
-        />
+        <div style={styles.floatingBtn} onClick={() => navigate('/chat')}>
+         <img src="/bulle.png" alt="chat" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
+        </div>
 
       </div>
     </div>
@@ -181,7 +181,21 @@ messageText: {
     cursor: 'pointer',
     transition: 'all 0.2s',
     minWidth: '60px',
-  },
+    },
+  floatingBtn: {
+  position: 'fixed',
+  bottom: '22px',
+  right: '22px',
+  width: '70px',
+  height: '70px',
+  borderRadius: '50%',
+      backgroundColor: theme.colors.border,
+  border: `2px solid ${theme.colors.primary}`,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+},
 }
 
 export default Dashboard

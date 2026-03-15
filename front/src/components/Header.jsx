@@ -5,7 +5,7 @@ const Header = ({ title }) => {
     <div style={styles.header}>
       <img src="/logo.png" alt="logo" style={styles.logo} />
       <h2 style={styles.title}>{title}</h2>
-      <div style={styles.avatar}>👤</div>
+      <img src="/profil.png" alt="profil" style={styles.profil} />
     </div>
   )
 }
@@ -30,8 +30,10 @@ const styles = {
     margin: 0,
     fontFamily: theme.fonts.primary,
   },
-  avatar: {
-    fontSize: '24px',
+  profil: {
+    width: '36px',
+    height: '36px',
+    borderRadius: theme.borderRadius.round,
     cursor: 'pointer',
   }
 }

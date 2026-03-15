@@ -24,6 +24,10 @@ const theme = {
     inputBorder: '#D4AF37',
     placeholder: '#5A3D21',
   
+    // Repas validés 
+    repasBackground: '#E8F5E9',
+    repasBorder: '#81C784',
+    repasText: '#2E7D32',
   
     // Statuts
     success: '#6BAF6B',
