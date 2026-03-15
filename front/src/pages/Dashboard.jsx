@@ -14,10 +14,10 @@ const Dashboard = () => {
   const { user } = useUser()
   const [humeur, setHumeur] = useState(null)
   const [repas, setRepas] = useState([
-    { id: 1, nom: 'Petit déj', icon: '🌅', mange: false },
-    { id: 2, nom: 'Déjeuner', icon: '☀️', mange: false },
-    { id: 3, nom: 'Encas', icon: '🍎', mange: false },
-    { id: 4, nom: 'Dîner', icon: '🌙', mange: false },
+   { id: 1, nom: 'Petit déj', icon: '/petitdej.png', mange: false },
+   { id: 2, nom: 'Déjeuner', icon: '/dejeuner.png', mange: false },
+   { id: 3, nom: 'Encas', icon: '/encas.png', mange: false },
+   { id: 4, nom: 'Dîner', icon: '/diner.png', mange: false },
   ])
   const [eau, setEau] = useState(0)
   const [victoire, setVictoire] = useState('')
@@ -77,25 +77,25 @@ const Dashboard = () => {
         </Card>
 
         {/* Repas */}
-        <Card title="Mes repas">
-          <div style={styles.row}>
-            {repas.map(r => (
-              <div key={r.id} onClick={() => setRepas(repas.map(x => x.id === r.id ? { ...x, mange: !x.mange } : x))} style={{
-                ...styles.item,
-                backgroundColor: r.mange ? '#E8F5E9' : theme.colors.background,
-                border: r.mange ? '2px solid #81C784' : '2px solid transparent',
-              }}>
-                <span style={{ fontSize: '24px' }}>{r.icon}</span>
-                <span style={{
-                  fontSize: '10px',
-                  color: r.mange ? '#2E7D32' : theme.colors.textSecondary,
-                  fontFamily: theme.fonts.primary,
-                }}>{r.nom}</span>
-                {r.mange && <span style={{ fontSize: '12px', color: '#2E7D32' }}>✓</span>}
-              </div>
-            ))}
-          </div>
-        </Card>
+<Card title="Mes repas">
+  <div style={styles.row}>
+    {repas.map(r => (
+      <div key={r.id} onClick={() => setRepas(repas.map(x => x.id === r.id ? { ...x, mange: !x.mange } : x))} style={{
+        ...styles.item,
+        backgroundColor: r.mange ? '#E8F5E9' : theme.colors.background,
+        border: r.mange ? '2px solid #81C784' : '2px solid transparent',
+      }}>
+        <img src={r.icon} alt={r.nom} style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+        <span style={{
+          fontSize: '10px',
+          color: r.mange ? '#2E7D32' : theme.colors.textSecondary,
+          fontFamily: theme.fonts.primary,
+        }}>{r.nom}</span>
+        {r.mange && <span style={{ fontSize: '12px', color: '#2E7D32' }}>✓</span>}
+      </div>
+    ))}
+  </div>
+</Card>
 
         {/* Eau */}
         <Card title={`Hydratation 💧 — ${eau}/8`}>

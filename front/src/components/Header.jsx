@@ -3,7 +3,7 @@ import theme from '../theme'
 const Header = ({ title }) => {
   return (
     <div style={styles.header}>
-      <img src="/Logo.png" alt="logo" style={styles.logo} />
+      <img src="/logo.png" alt="logo" style={styles.logo} />
       <h2 style={styles.title}>{title}</h2>
       <div style={styles.avatar}>👤</div>
     </div>
