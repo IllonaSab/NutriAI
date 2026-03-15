@@ -13,6 +13,7 @@ const styles = {
   card: {
     backgroundColor: '#FFF',
     borderRadius: '20px',
+    border: `1px solid ${theme.colors.primary}`,
     padding: '16px',
     boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
   },

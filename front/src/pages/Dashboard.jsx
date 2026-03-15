@@ -7,7 +7,8 @@ import theme from '../theme'
 import Header from '../components/Header'
 import Input from '../components/Input'
 import Card from '../components/Card'
-import Button from '../components/Button'
+import DateNav from '../components/DateNav'
+
 
 const Dashboard = () => {
   const navigate = useNavigate()
@@ -36,11 +37,12 @@ const Dashboard = () => {
       }
     }
     fetchMessage()
-  }, [])
+  }, [user?.objectif])
 
   return (
     <div style={styles.container}>
       <Header title={`Bonjour ${prenom} 🌸`} />
+      
 
       <div style={styles.scroll}>
 
@@ -52,7 +54,7 @@ const Dashboard = () => {
          <img src="/butterfly.png" alt="" style={styles.butterfly} />
         </div>
        </Card>
-
+       <DateNav onDateChange={(d) => console.log('Date changée :', d)} />
         {/* Humeur */}
         <Card title="Comment tu te sens ?">
           <div style={styles.row}>
