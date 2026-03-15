@@ -1,6 +1,6 @@
 html, body {
   height: 100%;
-  overflow: hidden;
+  overflow: auto;
   input::placeholder {
   color: #5A3D21;
   opacity: 1;

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import theme from '../theme'
+import { useNavigate } from 'react-router-dom'
 
 import Input from '../components/Input'
 import Button from '../components/Button'
@@ -11,7 +12,7 @@ const Login = () => {
   const handleLogin = () => {
     console.log('Login avec', email, password)
   }
-
+  const navigate = useNavigate()
   const handleGoogle = () => {
     window.location.href = `${process.env.REACT_APP_AUTH_URL}/auth/google`
   }
@@ -24,7 +25,7 @@ const Login = () => {
     <div style={styles.container}>
       {/* Header Logo+Title */}
       <div style={styles.header}>
-  <img src="/logo.png" alt="logo" style={styles.logo} />
+  <img src="/Logo.png" alt="logo" style={styles.logo} />
   <h1 style={styles.title}>Login</h1>
   <div style={styles.placeholder} />
 </div>
@@ -60,7 +61,9 @@ const Login = () => {
         {/* Lien Register */}
         <p style={styles.registerLink}>
           Pas encore de compte ?{' '}
-          <span style={styles.link}>S'inscrire</span>
+          <span style={styles.link} onClick={() => navigate('/register')}>
+            S'inscrire
+          </span>
         </p>
       </div>
   )
