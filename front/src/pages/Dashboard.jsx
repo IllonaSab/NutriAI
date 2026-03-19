@@ -6,6 +6,7 @@ import { useUser } from '../context/UserContext'
 import theme from '../theme'
 import Header from '../components/Header'
 import Input from '../components/Input'
+import { ButtonValid } from '../components/Button'
 import Card from '../components/Card'
 import DateNav from '../components/DateNav'
 import EmojiPicker from '../components/EmojiPicker'
@@ -23,6 +24,7 @@ const Dashboard = () => {
   ])
   const [eau, setEau] = useState(0)
   const [victoire, setVictoire] = useState('')
+  const [victoires, setVictoires] = useState([])
   const [message, setMessage] = useState('...')
   const [dateSelectee, setDateSelectee] = useState(new Date())
   const prenom = user?.name?.split(' ')[0] || 'toi'
@@ -57,12 +59,13 @@ const Dashboard = () => {
         setHumeur(res.data.humeur)
         setRepas(res.data.repas?.length ? res.data.repas : repasDefaut)
         setEau(res.data.eau || 0)
-        setVictoire(res.data.victoire || '')
+        const v = res.data.victoire || ''
+        setVictoires(v ? v.split('|') : [])
       } catch {
         setHumeur(null)
         setRepas(repasDefaut)
         setEau(0)
-        setVictoire('')
+        setVictoires([])
       }
     }
     chargerJour()
@@ -86,24 +89,27 @@ const Dashboard = () => {
 
   const handleHumeur = (i) => {
     setHumeur(i)
-    sauvegarder(i, repas, eau, victoire)
+    sauvegarder(i, repas, eau, victoires.join('|'))
   }
 
   const handleRepas = (id) => {
     const newRepas = repas.map(x => x.id === id ? { ...x, mange: !x.mange } : x)
     setRepas(newRepas)
-    sauvegarder(humeur, newRepas, eau, victoire)
+    sauvegarder(humeur, newRepas, eau, victoires.join('|'))
   }
 
   const handleEau = (i) => {
     const newEau = i < eau ? i : i + 1
     setEau(newEau)
-    sauvegarder(humeur, repas, newEau, victoire)
+    sauvegarder(humeur, repas, newEau, victoires.join('|'))
   }
 
-  const handleVictoire = (val) => {
-    setVictoire(val)
-    sauvegarder(humeur, repas, eau, val)
+  const handleAjouterVictoire = () => {
+    if (!victoire.trim()) return
+    const newVictoires = [...victoires, victoire]
+    setVictoires(newVictoires)
+    setVictoire('')
+    sauvegarder(humeur, repas, eau, newVictoires.join('|'))
   }
 
   return (
@@ -112,7 +118,6 @@ const Dashboard = () => {
 
       <div style={styles.scroll}>
 
-        {/* DateNav */}
         <DateNav onDateChange={(d) => setDateSelectee(d)} />
 
         {/* Message */}
@@ -123,26 +128,24 @@ const Dashboard = () => {
           </div>
         </Card>
 
-        {/* Humeur + Eau côte à côte */}
+        {/* Humeur + Eau */}
         <div style={styles.row}>
           <Card title="Comment tu te sens ?" style={{ flex: 2 }}>
             <EmojiPicker value={humeur} onChange={handleHumeur} />
           </Card>
 
-         <Card title={
+          <Card title={
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>Eau</span>
-           <img src="/water.png" alt="" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
-            <span>{eau}/8</span>
-           </div>
-          }
-          style={{ flex: 1 }}
-          >
-           <WaterTracker value={eau} onChange={handleEau} />
+              <span>Eau</span>
+              <img src="/water.png" alt="" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+              <span>{eau}/8</span>
+            </div>
+          } style={{ flex: 1 }}>
+            <WaterTracker value={eau} onChange={handleEau} />
           </Card>
         </div>
 
-        {/* Repas en grille 2x2 */}
+        {/* Repas */}
         <Card title="Mes repas">
           <div style={styles.repasGrid}>
             {repas.map(r => (
@@ -165,18 +168,30 @@ const Dashboard = () => {
 
         {/* Fierté */}
         <Card title="🌟 Ma fierté du jour">
-          <Input
-            placeholder="Une petite victoire à célébrer..."
-            value={victoire}
-            onChange={e => handleVictoire(e.target.value)}
-          />
+          <div style={styles.victoireRow}>
+            <Input
+              placeholder="Une petite victoire à célébrer..."
+              value={victoire}
+              onChange={e => setVictoire(e.target.value)}
+            />
+            <ButtonValid onClick={handleAjouterVictoire} icon="/plus.png" />
+          </div>
+          {victoires.length > 0 && (
+            <div style={styles.victoireList}>
+              {victoires.map((v, i) => (
+                <div key={i} style={styles.victoireItem}>
+                  <span style={{ color: theme.colors.primary }}>✓</span>
+                  <span style={{ fontSize: '13px', color: theme.colors.textPrimary, fontFamily: theme.fonts.primary }}>{v}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
 
       </div>
 
-      {/* Bouton flottant chat */}
       <div style={styles.floatingBtn} onClick={() => navigate('/chat')}>
-        <img src="/bulle.png" alt="chat" style={{ width: '42px', height: '42px', objectFit: 'contain' }} />
+        <img src="/bulle.png" alt="chat" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
       </div>
 
     </div>
@@ -236,6 +251,26 @@ const styles = {
     borderRadius: '12px',
     cursor: 'pointer',
     transition: 'all 0.2s',
+  },
+victoireRow: {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
+  justifyContent: 'flex-start',
+},
+  victoireList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+    marginTop: '10px',
+  },
+  victoireItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '6px 10px',
+    backgroundColor: theme.colors.background,
+    borderRadius: '10px',
   },
   floatingBtn: {
     position: 'fixed',
