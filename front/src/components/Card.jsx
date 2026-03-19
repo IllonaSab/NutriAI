@@ -3,7 +3,12 @@ import theme from '../theme'
 const Card = ({ title, children, style }) => {
   return (
     <div style={{ ...styles.card, ...style }}>
-      {title && <p style={styles.cardTitle}>{title}</p>}
+      {title && (
+        <div style={styles.titleRow}>
+          <p style={styles.cardTitle}>{title}</p>
+          <div style={styles.titleLine} />
+        </div>
+      )}
       {children}
     </div>
   )
@@ -11,20 +16,31 @@ const Card = ({ title, children, style }) => {
 
 const styles = {
   card: {
-    backgroundColor: '#FFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: '20px',
-    border: `1px solid ${theme.colors.primary}`,
     padding: '16px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+    boxShadow: '0 4px 16px rgba(200,168,75,0.08)',
+    border: `1px solid ${theme.colors.border}`,
+  },
+  titleRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    marginBottom: '12px',
   },
   cardTitle: {
-    fontSize: '14px',
+    fontSize: '13px',
     fontWeight: '500',
     color: theme.colors.secondary,
-    marginBottom: '10px',
     fontFamily: theme.fonts.primary,
-    margin: '0 0 10px 0',
-  }
+    margin: 0,
+    whiteSpace: 'nowrap',
+  },
+  titleLine: {
+    flex: 1,
+    height: '1px',
+    backgroundColor: theme.colors.border,
+  },
 }
 
 export default Card

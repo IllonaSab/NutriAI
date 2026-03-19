@@ -33,7 +33,6 @@ const Dashboard = () => {
     { id: 4, nom: 'Dîner', icon: '/diner.png', mange: false },
   ]
 
-  // Message du jour
   useEffect(() => {
     const fetchMessage = async () => {
       try {
@@ -48,7 +47,6 @@ const Dashboard = () => {
     fetchMessage()
   }, [])
 
-  // Charger les données du jour
   useEffect(() => {
     if (!user?.id) return
     const chargerJour = async () => {
@@ -68,22 +66,21 @@ const Dashboard = () => {
     chargerJour()
   }, [dateString, user])
 
-  // Sauvegarder automatiquement
-const sauvegarder = async (newHumeur, newRepas, newEau, newVictoire) => {
-  if (!user?.id) return
-  try {
-    await axios.post(`${config.DB_URL}/users/jour`, {
-      userId: user.id,
-      date: dateString,
-      humeur: newHumeur,
-      repas: newRepas,
-      eau: newEau,
-      victoire: newVictoire
-    })
-  } catch (err) {
-    console.error('Erreur sauvegarde', err)
+  const sauvegarder = async (newHumeur, newRepas, newEau, newVictoire) => {
+    if (!user?.id) return
+    try {
+      await axios.post(`${config.DB_URL}/users/jour`, {
+        userId: user.id,
+        date: dateString,
+        humeur: newHumeur,
+        repas: newRepas,
+        eau: newEau,
+        victoire: newVictoire
+      })
+    } catch (err) {
+      console.error('Erreur sauvegarde', err)
+    }
   }
-}
 
   const handleHumeur = (i) => {
     setHumeur(i)
@@ -116,48 +113,66 @@ const sauvegarder = async (newHumeur, newRepas, newEau, newVictoire) => {
 
         {/* Message */}
         <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={styles.messageRow}>
             <img src="/butterfly.png" alt="" style={styles.butterfly} />
             <p style={styles.messageText}>{message}</p>
           </div>
         </Card>
 
-        {/* Humeur */}
-        <Card title="Comment tu te sens ?">
-          <div style={styles.row}>
-            {[
-              { emoji: '😔', label: 'Difficile' },
-              { emoji: '😐', label: 'Neutre' },
-              { emoji: '🙂', label: 'Bien' },
-              { emoji: '😊', label: 'Super' },
-            ].map((e, i) => (
-              <div key={i} onClick={() => handleHumeur(i)} style={{
-                ...styles.item,
-                backgroundColor: humeur === i ? theme.colors.primary : theme.colors.background,
-              }}>
-                <span style={{ fontSize: '26px' }}>{e.emoji}</span>
-                <span style={{
-                  fontSize: '10px',
-                  color: humeur === i ? theme.colors.surface : theme.colors.textSecondary,
-                  fontFamily: theme.fonts.primary,
-                }}>{e.label}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
+        {/* Humeur + Eau côte à côte */}
+        <div style={styles.row}>
+          <Card title="Comment tu te sens ?" style={{ flex: 1 }}>
+            <div style={styles.emojiGrid}>
+              {[
+                { emoji: '😔', label: 'Difficile' },
+                { emoji: '😐', label: 'Neutre' },
+                { emoji: '🙂', label: 'Bien' },
+                { emoji: '😊', label: 'Super' },
+              ].map((e, i) => (
+                <div key={i} onClick={() => handleHumeur(i)} style={{
+                  ...styles.emojiItem,
+                  backgroundColor: humeur === i ? theme.colors.primary : theme.colors.background,
+                }}>
+                  <span style={{ fontSize: '22px' }}>{e.emoji}</span>
+                  <span style={{
+                    fontSize: '9px',
+                    color: humeur === i ? theme.colors.surface : theme.colors.textSecondary,
+                    fontFamily: theme.fonts.primary,
+                  }}>{e.label}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
 
-        {/* Repas */}
+          <Card title={`Eau 💧 ${eau}/8`} style={{ flex: 1 }}>
+            <div style={styles.eauGrid}>
+              {[...Array(8)].map((_, i) => (
+                <span key={i} onClick={() => handleEau(i)} style={{
+                  fontSize: '35px',
+                  opacity: i < eau ? 1 : 0.3,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  textAlign: 'center',
+                }}>
+                  💧
+                </span>
+              ))}
+            </div>
+          </Card>
+        </div>
+
+        {/* Repas en grille 2x2 */}
         <Card title="Mes repas">
-          <div style={styles.row}>
+          <div style={styles.repasGrid}>
             {repas.map(r => (
               <div key={r.id} onClick={() => handleRepas(r.id)} style={{
-                ...styles.item,
+                ...styles.repasItem,
                 backgroundColor: r.mange ? theme.colors.repasBackground : theme.colors.background,
                 border: r.mange ? `2px solid ${theme.colors.repasBorder}` : '2px solid transparent',
               }}>
-                <img src={r.icon} alt={r.nom} style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                <img src={r.icon} alt={r.nom} style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
                 <span style={{
-                  fontSize: '10px',
+                  fontSize: '11px',
                   color: r.mange ? theme.colors.repasText : theme.colors.textSecondary,
                   fontFamily: theme.fonts.primary,
                 }}>{r.nom}</span>
@@ -167,23 +182,7 @@ const sauvegarder = async (newHumeur, newRepas, newEau, newVictoire) => {
           </div>
         </Card>
 
-        {/* Eau */}
-        <Card title={`Hydratation 💧 — ${eau}/8`}>
-          <div style={styles.row}>
-            {[...Array(8)].map((_, i) => (
-              <span key={i} onClick={() => handleEau(i)} style={{
-                fontSize: '22px',
-                opacity: i < eau ? 1 : 0.2,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}>
-                💧
-              </span>
-            ))}
-          </div>
-        </Card>
-
-        {/* Victoire */}
+        {/* Fierté */}
         <Card title="🌟 Ma fierté du jour">
           <Input
             placeholder="Une petite victoire à célébrer..."
@@ -214,41 +213,68 @@ const styles = {
   scroll: {
     flex: 1,
     overflowY: 'auto',
-    padding: '16px',
+    padding: '12px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px',
+    gap: '12px',
+  },
+  messageRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
   },
   butterfly: {
-    width: '50px',
-    height: '50px',
+    width: '40px',
+    height: '40px',
     objectFit: 'contain',
     flexShrink: 0,
   },
   messageText: {
-    fontSize: '14px',
+    fontSize: '13px',
     color: theme.colors.textSecondary,
     fontStyle: 'italic',
-    lineHeight: '1.6',
+    lineHeight: '1.5',
     margin: 0,
     flex: 1,
   },
   row: {
     display: 'flex',
-    gap: '8px',
-    flexWrap: 'wrap',
+    gap: '12px',
   },
-  item: {
-    flex: 1,
+  emojiGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '6px',
+  },
+  emojiItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '3px',
+    padding: '8px 4px',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+  },
+  eauGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr 1fr 1fr',
+    gap: '4px',
+  },
+  repasGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '8px',
+  },
+  repasItem: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     gap: '4px',
-    padding: '10px 6px',
+    padding: '12px 8px',
     borderRadius: '12px',
     cursor: 'pointer',
     transition: 'all 0.2s',
-    minWidth: '60px',
   },
   floatingBtn: {
     position: 'fixed',
