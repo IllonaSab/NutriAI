@@ -1,5 +1,5 @@
 const express = require('express')
-const { analyzeNutrition, analyzeMeal, generateMealPlan } = require('../services/gemini')
+const { analyzeNutrition, analyzeMeal, generateMealPlan } = require('../services/groq')
 const router = express.Router()
 
 // Conseils nutritionnels

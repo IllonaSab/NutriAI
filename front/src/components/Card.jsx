@@ -5,7 +5,7 @@ const Card = ({ title, children, style }) => {
     <div style={{ ...styles.card, ...style }}>
       {title && (
         <div style={styles.titleRow}>
-          <p style={styles.cardTitle}>{title}</p>
+          <div style={styles.cardTitle}>{title}</div>
           <div style={styles.titleLine} />
         </div>
       )}
