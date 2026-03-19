@@ -12,7 +12,9 @@ const Card = ({ title, children, style }) => {
       {children}
     </div>
   )
+  
 }
+
 
 const styles = {
   card: {

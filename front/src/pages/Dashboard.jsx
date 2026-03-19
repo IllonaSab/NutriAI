@@ -8,6 +8,8 @@ import Header from '../components/Header'
 import Input from '../components/Input'
 import Card from '../components/Card'
 import DateNav from '../components/DateNav'
+import EmojiPicker from '../components/EmojiPicker'
+import WaterTracker from '../components/WaterTracker'
 
 const Dashboard = () => {
   const navigate = useNavigate()
@@ -107,9 +109,11 @@ const Dashboard = () => {
   return (
     <div style={styles.container}>
       <Header title={`Bonjour ${prenom} 🌸`} />
-      <DateNav onDateChange={(d) => setDateSelectee(d)} />
 
       <div style={styles.scroll}>
+
+        {/* DateNav */}
+        <DateNav onDateChange={(d) => setDateSelectee(d)} />
 
         {/* Message */}
         <Card>
@@ -121,43 +125,20 @@ const Dashboard = () => {
 
         {/* Humeur + Eau côte à côte */}
         <div style={styles.row}>
-          <Card title="Comment tu te sens ?" style={{ flex: 1 }}>
-            <div style={styles.emojiGrid}>
-              {[
-                { emoji: '😔', label: 'Difficile' },
-                { emoji: '😐', label: 'Neutre' },
-                { emoji: '🙂', label: 'Bien' },
-                { emoji: '😊', label: 'Super' },
-              ].map((e, i) => (
-                <div key={i} onClick={() => handleHumeur(i)} style={{
-                  ...styles.emojiItem,
-                  backgroundColor: humeur === i ? theme.colors.primary : theme.colors.background,
-                }}>
-                  <span style={{ fontSize: '22px' }}>{e.emoji}</span>
-                  <span style={{
-                    fontSize: '9px',
-                    color: humeur === i ? theme.colors.surface : theme.colors.textSecondary,
-                    fontFamily: theme.fonts.primary,
-                  }}>{e.label}</span>
-                </div>
-              ))}
-            </div>
+          <Card title="Comment tu te sens ?" style={{ flex: 2 }}>
+            <EmojiPicker value={humeur} onChange={handleHumeur} />
           </Card>
 
-          <Card title={`Eau 💧 ${eau}/8`} style={{ flex: 1 }}>
-            <div style={styles.eauGrid}>
-              {[...Array(8)].map((_, i) => (
-                <span key={i} onClick={() => handleEau(i)} style={{
-                  fontSize: '35px',
-                  opacity: i < eau ? 1 : 0.3,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  textAlign: 'center',
-                }}>
-                  💧
-                </span>
-              ))}
-            </div>
+         <Card title={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span>Eau</span>
+           <img src="/water.png" alt="" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+            <span>{eau}/8</span>
+           </div>
+          }
+          style={{ flex: 1 }}
+          >
+           <WaterTracker value={eau} onChange={handleEau} />
           </Card>
         </div>
 
@@ -240,26 +221,6 @@ const styles = {
   row: {
     display: 'flex',
     gap: '12px',
-  },
-  emojiGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '6px',
-  },
-  emojiItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '3px',
-    padding: '8px 4px',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-  },
-  eauGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr 1fr 1fr',
-    gap: '4px',
   },
   repasGrid: {
     display: 'grid',
