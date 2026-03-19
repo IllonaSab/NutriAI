@@ -3,7 +3,14 @@ import { createContext, useContext, useState } from 'react'
 const UserContext = createContext()
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('user')
+      return saved ? JSON.parse(saved) : null
+    } catch {
+      return null
+    }
+  })
 
   const login = (userData) => {
     setUser(userData)
@@ -16,13 +23,8 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem('token')
   }
 
-  const loadUser = () => {
-    const saved = localStorage.getItem('user')
-    if (saved) setUser(JSON.parse(saved))
-  }
-
   return (
-    <UserContext.Provider value={{ user, setUser, login, logout, loadUser }}>
+    <UserContext.Provider value={{ user, setUser, login, logout }}>
       {children}
     </UserContext.Provider>
   )

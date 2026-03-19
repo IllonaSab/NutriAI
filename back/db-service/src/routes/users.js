@@ -18,19 +18,6 @@ router.post('/upsert', async (req, res) => {
   }
 })
 
-// Récupérer un utilisateur par email
-router.get('/:email', async (req, res) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { email: req.params.email }
-    })
-    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' })
-    res.json(user)
-  } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur', error: err.message })
-  }
-})
-
 // Sauvegarder les données du jour
 router.post('/jour', async (req, res) => {
   const { userId, date, humeur, repas, eau, victoire } = req.body
@@ -58,5 +45,22 @@ router.get('/jour/:userId/:date', async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur', error: err.message })
   }
 })
+
+// Récupérer un utilisateur par email
+router.get('/:email', async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: req.params.email }
+    })
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' })
+    res.json(user)
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur', error: err.message })
+  }
+})
+
+
+
+
 
 module.exports = router

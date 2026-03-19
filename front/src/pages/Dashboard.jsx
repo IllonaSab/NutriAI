@@ -69,21 +69,21 @@ const Dashboard = () => {
   }, [dateString, user])
 
   // Sauvegarder automatiquement
-  const sauvegarder = async (newHumeur, newRepas, newEau, newVictoire) => {
-    if (!user?.id) return
-    try {
-      await axios.post(`${config.DB_URL}/users/jour`, {
-        userId: user.id,
-        date: dateString,
-        humeur: newHumeur,
-        repas: newRepas,
-        eau: newEau,
-        victoire: newVictoire
-      })
-    } catch (err) {
-      console.error('Erreur sauvegarde', err)
-    }
+const sauvegarder = async (newHumeur, newRepas, newEau, newVictoire) => {
+  if (!user?.id) return
+  try {
+    await axios.post(`${config.DB_URL}/users/jour`, {
+      userId: user.id,
+      date: dateString,
+      humeur: newHumeur,
+      repas: newRepas,
+      eau: newEau,
+      victoire: newVictoire
+    })
+  } catch (err) {
+    console.error('Erreur sauvegarde', err)
   }
+}
 
   const handleHumeur = (i) => {
     setHumeur(i)
