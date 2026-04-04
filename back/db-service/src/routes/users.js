@@ -5,12 +5,12 @@ const prisma = new PrismaClient()
 
 // Créer ou trouver un utilisateur après OAuth
 router.post('/upsert', async (req, res) => {
-  const { email, name, provider, providerId, age, poids, taille, objectif } = req.body
+  const { email, name, provider, providerId, password, age, poids, taille, objectif } = req.body
   try {
     const user = await prisma.user.upsert({
       where: { email },
-      update: { name, provider, providerId, age, poids, taille, objectif },
-      create: { email, name, provider, providerId, age, poids, taille, objectif }
+      update: { name, provider, providerId, password, age, poids, taille, objectif },
+      create: { email, name, provider, providerId, password, age, poids, taille, objectif }
     })
     res.json(user)
   } catch (err) {

@@ -13,6 +13,7 @@ model User {
   name       String?
   provider   String
   providerId String
+  password   String?
   age        Int?
   poids      Float?
   taille     Float?

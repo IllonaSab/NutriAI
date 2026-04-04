@@ -28,22 +28,23 @@ const Register = () => {
     }
     
   const { login } = useUser()
- const handleRegister = async () => {
+  
+const handleRegister = async () => {
   try {
-    const res = await axios.post(`${config.DB_URL}/users/upsert`, {
+    const res = await axios.post(`${config.AUTH_URL}/auth/register`, {
       email: form.email,
+      password: form.password,
       name: `${form.prenom} ${form.nom}`,
-      provider: 'local',
-      providerId: form.email,
       age: parseInt(form.age),
       poids: parseFloat(form.poids),
       taille: parseFloat(form.taille),
       objectif: form.objectif
     })
-    login(res.data)
+    login(res.data.user)
+    localStorage.setItem('token', res.data.token)
     navigate('/dashboard')
   } catch (err) {
-    console.error('Erreur inscription', err)
+    alert('Erreur lors de l\'inscription')
   }
 }
 
