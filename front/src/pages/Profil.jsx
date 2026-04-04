@@ -60,74 +60,58 @@ const Profil = () => {
       <div style={styles.scroll}>
 
         {/* Avatar */}
-        <Card>
-          <div style={styles.avatarSection}>
-            <div style={styles.avatar}>
-              {user?.name?.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p style={styles.userName}>{user?.name}</p>
-              <p style={styles.userEmail}>{user?.email}</p>
-              <span style={styles.providerBadge}>{user?.provider}</span>
-            </div>
+        <div style={styles.avatarSection}>
+          <div style={styles.avatar}>
+            {user?.name?.charAt(0).toUpperCase()}
           </div>
-        </Card>
+          <p style={styles.userName}>{user?.name}</p>
+          <p style={styles.userEmail}>{user?.email}</p>
+          <span style={styles.providerBadge}>{user?.provider}</span>
+        </div>
 
         {/* Infos */}
-        <Card title="Mes informations">
-          <div style={styles.form}>
-            <Input
-              label="Nom complet"
-              value={form.name}
-              onChange={handleChange('name')}
-              placeholder="Ton nom"
-            />
-            <Input
-              label="Âge"
-              type="number"
-              value={form.age}
-              onChange={handleChange('age')}
-              placeholder="25"
-            />
-            <Input
-              label="Poids (kg)"
-              type="number"
-              value={form.poids}
-              onChange={handleChange('poids')}
-              placeholder="56"
-            />
-            <Input
-              label="Taille (cm)"
-              type="number"
-              value={form.taille}
-              onChange={handleChange('taille')}
-              placeholder="165"
-            />
-          </div>
-        </Card>
+       <Card title="Mes informations">
+  <div style={styles.row}>
+    <div style={{ flex: 1 }}>
+      <Input label="Âge" type="number" value={form.age} onChange={handleChange('age')} placeholder="25" />
+    </div>
+    <div style={{ flex: 1 }}>
+      <Input label="Poids (kg)" type="number" value={form.poids} onChange={handleChange('poids')} placeholder="56" />
+    </div>
+    <div style={{ flex: 1 }}>
+      <Input label="Taille (cm)" type="number" value={form.taille} onChange={handleChange('taille')} placeholder="165" />
+    </div>
+  </div>
+</Card>
 
-        {/* Objectif */}
-        <Card title="Mon objectif">
-          <div style={styles.objectifButtons}>
-            {['Douceur', 'Stabilité', 'Réussite'].map((obj) => (
-              <ButtonSelect
-                key={obj}
-                label={obj}
-                selected={form.objectif === obj}
-                onClick={() => setForm({ ...form, objectif: obj })}
-              />
-            ))}
-          </div>
-        </Card>
+        {/* Mon compte */}
+        <Card title="Mon compte">
+  <div style={styles.menuList}>
+    <div style={styles.menuItem} onClick={() => navigate('/change-password')}>
+      <div style={styles.menuLeft}>
+        <img src="/mdp.png" alt="" style={styles.menuIcon} />
+        <span>Modifier mon mot de passe</span>
+      </div>
+    </div>
+    <div style={styles.menuItem} onClick={() => navigate('/abonnement')}>
+      <div style={styles.menuLeft}>
+        <img src="/abonnement.png" alt="" style={styles.menuIcon} />
+        <span>Mon abonnement</span>
+      </div>
+    </div>
+    <div style={styles.menuItem} onClick={() => navigate('/support')}>
+      <div style={styles.menuLeft}>
+        <img src="/support.png" alt="" style={styles.menuIcon} />
+        <span>Support & Aide</span>
+      </div>
+    </div>
+  </div>
+</Card>
 
-        {/* Succès */}
         {success && (
-          <div style={styles.successMsg}>
-            ✅ Profil mis à jour !
-          </div>
+          <div style={styles.successMsg}>✅ Profil mis à jour !</div>
         )}
 
-        {/* Boutons */}
         <Button label="Sauvegarder" onClick={handleSave} variant="primary" />
         <Button label="Se déconnecter" onClick={handleLogout} variant="secondary" />
 
@@ -154,24 +138,26 @@ const styles = {
   },
   avatarSection: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    gap: '16px',
+    gap: '6px',
+    padding: '20px 0',
   },
   avatar: {
-    width: '60px',
-    height: '60px',
+    width: '70px',
+    height: '70px',
     borderRadius: '50%',
     backgroundColor: theme.colors.primary,
     color: theme.colors.textLight,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '24px',
+    fontSize: '28px',
     fontWeight: '500',
-    flexShrink: 0,
+    marginBottom: '8px',
   },
   userName: {
-    fontSize: '16px',
+    fontSize: '18px',
     color: theme.colors.secondary,
     fontWeight: '500',
     margin: 0,
@@ -180,26 +166,59 @@ const styles = {
   userEmail: {
     fontSize: '13px',
     color: theme.colors.textSecondary,
-    margin: '4px 0',
+    margin: 0,
     fontFamily: theme.fonts.primary,
   },
   providerBadge: {
     fontSize: '11px',
     backgroundColor: theme.colors.primary,
     color: theme.colors.textLight,
-    padding: '2px 8px',
+    padding: '2px 10px',
     borderRadius: '20px',
+    marginTop: '4px',
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
     gap: '12px',
   },
-  objectifButtons: {
+  row: {
     display: 'flex',
     gap: '8px',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
+  },
+
+  menuList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  },
+menuItem: {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: '10px',
+  padding: '12px 8px',
+  borderRadius: '10px',
+  cursor: 'pointer',
+  fontSize: '14px',
+  color: theme.colors.textPrimary,
+  fontFamily: theme.fonts.primary,
+  backgroundColor: theme.colors.background,
+  transition: 'all 0.2s',
+},
+  menuLeft: {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+},
+menuIcon: {
+  width: '24px',
+  height: '24px',
+  objectFit: 'contain',
+},
+  arrow: {
+    color: theme.colors.primary,
+    fontSize: '16px',
   },
   successMsg: {
     backgroundColor: theme.colors.repasBackground,

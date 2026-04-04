@@ -4,6 +4,9 @@ import Chat from './pages/Chat'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Profil from './pages/Profil'
+import ChangePassword from './pages/ChangePassword'
+import Abonnement from './pages/Abonnement'
+import Support from './pages/Support'
 
 import { UserProvider } from './context/UserContext'
 
@@ -17,6 +20,9 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profil" element={<Profil />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/abonnement" element={<Abonnement />} />
+          <Route path="/support" element={<Support />} />
           <Route path="/chat" element={<Chat />} />
         </Routes>
       </BrowserRouter>
