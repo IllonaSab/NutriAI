@@ -1,11 +1,19 @@
+import { useNavigate } from 'react-router-dom'
 import theme from '../theme'
 
 const Header = ({ title }) => {
+  const navigate = useNavigate()
+
   return (
     <div style={styles.header}>
-      <img src="/logo.png" alt="logo" style={styles.logo} />
+      <img src="/Logo.png" alt="logo" style={styles.logo} />
       <h2 style={styles.title}>{title}</h2>
-      <img src="/profil.png" alt="profil" style={styles.profil} />
+      <img
+        src="/profil.png"
+        alt="profil"
+        style={styles.profil}
+        onClick={() => navigate('/profil')}
+      />
     </div>
   )
 }
@@ -35,6 +43,7 @@ const styles = {
     height: '36px',
     borderRadius: theme.borderRadius.round,
     cursor: 'pointer',
+    objectFit: 'contain',
   }
 }
 
